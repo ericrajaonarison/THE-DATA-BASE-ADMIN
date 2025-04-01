@@ -340,11 +340,6 @@
             try {
                 const snapshot = await contactsRef.get();
                 contacts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                
-                if (contacts.length === 0) {
-                    await createSampleContact();
-                }
-                
                 setupRealtimeUpdates();
                 renderContacts();
             } catch (error) {
@@ -452,7 +447,6 @@
             const contact = contacts[index];
             const cells = row.cells;
             
-            // Input-Felder
             cells[0].innerHTML = `<input class="edit-input" value="${contact.name}" placeholder="Name"><button class="delete-btn">DELETE</button>`;
             cells[1].innerHTML = `<input class="edit-input" value="${contact.category}" placeholder="Category">`;
             cells[2].innerHTML = `<input class="edit-input" value="${contact.city}" placeholder="City"><input class="edit-input" value="${contact.address}" placeholder="Address">`;
@@ -460,7 +454,6 @@
             cells[4].innerHTML = `<input class="edit-input" value="${contact.info}" placeholder="Info"><input class="edit-input" value="${contact.tags}" placeholder="Tags">`;
             cells[5].innerHTML = `<textarea class="edit-input" style="height:60px">${(contact.contact || '').replace(/<br>/g, '\n')}</textarea>`;
 
-            // Event-Listener für Inputs
             cells[0].querySelector('input').addEventListener('input', e => contact.name = e.target.value);
             cells[1].querySelector('input').addEventListener('input', e => contact.category = e.target.value);
             cells[2].querySelectorAll('input')[0].addEventListener('input', e => contact.city = e.target.value);
@@ -470,7 +463,6 @@
             cells[4].querySelectorAll('input')[1].addEventListener('input', e => contact.tags = e.target.value);
             cells[5].querySelector('textarea').addEventListener('input', e => contact.contact = e.target.value.replace(/\n/g, '<br>'));
 
-            // Lösch-Button
             cells[0].querySelector('.delete-btn').addEventListener('click', async () => {
                 if (confirm('Delete this contact permanently?')) {
                     try {
@@ -481,25 +473,6 @@
                     }
                 }
             });
-        }
-
-        async function createSampleContact() {
-            try {
-                await contactsRef.add({
-                    name: 'MAX MUSTERMANN',
-                    category: 'DANCER',
-                    city: 'BERLIN',
-                    address: 'MUSTERSTRASSE 12, 10115 BERLIN',
-                    instagram: '@maxdance',
-                    info: 'CONTEMPORARY SPECIALIST',
-                    contact: '+49 123 456789<br>max@dance.com',
-                    keywords: 'max dancer tänzer reliable zuverlässig',
-                    tags: 'kreuzberg urban'
-                });
-            } catch (error) {
-                console.error('Error creating sample contact:', error);
-                alert('Beispielkontakt Fehler: ' + error.message);
-            }
         }
 
         async function addNewContact() {
